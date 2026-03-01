@@ -19,38 +19,61 @@ export default function FinalCTA() {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const deviceRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (prefersReducedMotion()) return;
+    if (prefersReducedMotion()) {
+      gsap.set([containerRef.current, contentRef.current?.children || [], deviceRef.current], { opacity: 1, y: 0, scale: 1 });
+      return;
+    }
 
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        containerRef.current,
-        { y: 80, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 70%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
+      let mm = gsap.matchMedia();
 
-      const contentElements = contentRef.current?.querySelectorAll(".cta-element");
-      if (contentElements) {
+      mm.add("(min-width: 768px)", () => {
         gsap.fromTo(
-          contentElements,
-          { y: 30, opacity: 0 },
+          containerRef.current,
+          { scale: 0.95, opacity: 0 },
           {
-            y: 0,
+            scale: 1,
             opacity: 1,
             duration: 0.6,
-            stagger: 0.1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+
+        const elements = contentRef.current?.querySelectorAll(".cta-element");
+        if (elements) {
+          gsap.fromTo(
+            elements,
+            { y: 20, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.4,
+              stagger: 0.05,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top 70%",
+                toggleActions: "play none none reverse",
+              },
+            }
+          );
+        }
+
+        gsap.fromTo(
+          deviceRef.current,
+          { x: 30, opacity: 0, scale: 0.9 },
+          {
+            x: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.6,
             ease: "power2.out",
             scrollTrigger: {
               trigger: sectionRef.current,
@@ -59,29 +82,10 @@ export default function FinalCTA() {
             },
           }
         );
-      }
+      });
 
-      gsap.fromTo(
-        deviceRef.current,
-        { x: 50, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 50%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
-
-      gsap.to(ringRef.current, {
-        rotation: 360,
-        duration: 60,
-        repeat: -1,
-        ease: "none",
+      mm.add("(max-width: 767px)", () => {
+        gsap.set([containerRef.current, deviceRef.current], { opacity: 1, y: 0, scale: 1 });
       });
 
     }, sectionRef);
@@ -96,20 +100,11 @@ export default function FinalCTA() {
     >
       <div
         ref={containerRef}
-        className="max-w-7xl mx-auto bg-dark-card rounded-[3rem] border border-dark-border overflow-hidden relative min-h-[600px]"
+        className="max-w-6xl mx-auto bg-dark-card rounded-[3rem] border border-dark-border overflow-hidden relative min-h-[500px]"
       >
-        <div
-          ref={ringRef}
-          className="absolute -right-40 top-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-20"
-        >
-          <div className="absolute inset-0 border border-pastel-purple/30 rounded-full" />
-          <div className="absolute inset-20 border border-pastel-blue/20 rounded-full" />
-          <div className="absolute inset-40 border border-pastel-cyan/10 rounded-full" />
-        </div>
-
-        <div className="relative z-10 grid md:grid-cols-2 gap-12 p-8 md:p-16 items-center min-h-[600px]">
+        <div className="relative z-10 grid md:grid-cols-2 gap-12 p-8 md:p-16 items-center">
           <div ref={contentRef}>
-            <h2 className="cta-element text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+            <h2 className="cta-element text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
               Get unlimited growth experiments
             </h2>
 
@@ -131,70 +126,50 @@ export default function FinalCTA() {
               <button className="px-8 py-4 bg-white text-black rounded-full font-medium hover:bg-gray-100 transition-colors">
                 Book a Strategy Call
               </button>
-              <button className="px-8 py-4 bg-white/10 text-white rounded-full font-medium hover:bg-white/20 transition-colors border border-white/20">
-                See Case Studies
-              </button>
             </div>
           </div>
 
-          <div ref={deviceRef} className="relative flex justify-center">
-            <div className="relative w-[280px] md:w-[320px] h-[500px] md:h-[560px] bg-black rounded-[2.5rem] border-8 border-gray-800 shadow-2xl overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-b from-gray-900 to-black p-5">
-                <div className="flex items-center justify-between mb-6">
+          <div ref={deviceRef} className="relative flex justify-center lg:justify-end">
+            {/* Robust Phone Mock Restoration */}
+            <div className="relative w-[280px] md:w-[320px] h-[550px] bg-black rounded-[3rem] border-8 border-gray-800 shadow-3xl overflow-hidden ring-4 ring-white/5">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-gray-800 rounded-b-2xl z-20" /> {/* Speaker island */}
+              <div className="absolute inset-0 bg-gradient-to-b from-dark-bg to-black p-6 pt-10">
+                <div className="flex items-center justify-between mb-8">
                   <div className="w-8 h-8 bg-gradient-to-br from-pastel-purple to-pastel-blue rounded-lg" />
-                  <div className="flex gap-1">
-                    <div className="w-1 h-1 bg-white rounded-full" />
-                    <div className="w-1 h-1 bg-white/30 rounded-full" />
-                    <div className="w-1 h-1 bg-white/30 rounded-full" />
+                  <span className="text-white/30 text-[10px] lowercase tracking-widest font-mono">luma_growth_v3</span>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                    <p className="text-white/40 text-[10px] uppercase tracking-wider mb-2">Conversion Value</p>
+                    <div className="flex items-end gap-2">
+                      <span className="text-white text-3xl font-bold tracking-tight">$42,910</span>
+                      <span className="text-pastel-green text-xs font-semibold mb-1">+12.5%</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 bg-white/5 rounded-2xl border border-white/5">
+                      <p className="text-white/40 text-[10px] uppercase tracking-wider mb-1">ROAS</p>
+                      <p className="text-white text-xl font-bold">4.8x</p>
+                    </div>
+                    <div className="p-3 bg-white/5 rounded-2xl border border-white/5">
+                      <p className="text-white/40 text-[10px] uppercase tracking-wider mb-1">CTR</p>
+                      <p className="text-white text-xl font-bold">5.2%</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-end gap-1.5 h-16 pt-2">
+                    {[40, 60, 50, 80, 70, 95, 85].map((h, i) => (
+                      <div key={i} className="flex-1 bg-pastel-purple/40 rounded-t-[2px]" style={{ height: `${h}%` }} />
+                    ))}
                   </div>
                 </div>
 
-                <div className="text-center mb-8">
-                  <p className="text-white/50 text-sm mb-1">Total Growth</p>
-                  <p className="text-white text-4xl font-bold">+247%</p>
-                  <div className="flex items-center justify-center gap-1 text-pastel-green text-sm mt-2">
-                    <TrendingUp className="w-4 h-4" />
-                    <span>vs last month</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  <div className="bg-white/5 rounded-xl p-3">
-                    <p className="text-white/50 text-xs">ROAS</p>
-                    <p className="text-white text-xl font-bold">5.1x</p>
-                  </div>
-                  <div className="bg-white/5 rounded-xl p-3">
-                    <p className="text-white/50 text-xs">CPA</p>
-                    <p className="text-white text-xl font-bold">$12.40</p>
-                  </div>
-                </div>
-
-                <div className="h-24 bg-white/5 rounded-xl p-3 flex items-end gap-1">
-                  {[35, 50, 40, 65, 55, 80, 70, 85, 75, 95].map((h, i) => (
-                    <div
-                      key={i}
-                      className="flex-1 bg-gradient-to-t from-pastel-purple to-pastel-blue rounded-t-sm"
-                      style={{ height: `${h}%` }}
-                    />
-                  ))}
-                </div>
-
-                <div className="absolute bottom-4 left-4 right-4 flex justify-around">
-                  <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">
-                    <Check className="w-5 h-5 text-pastel-purple" />
-                  </div>
-                  <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-white/30" />
-                  </div>
-                  <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center">
-                    <Zap className="w-5 h-5 text-white/30" />
-                  </div>
-                </div>
+                <button className="absolute bottom-6 left-6 right-6 py-3 bg-pastel-purple text-black text-sm font-bold rounded-xl shadow-lg shadow-pastel-purple/20">
+                  Launch Campaign
+                </button>
               </div>
-            </div>
-
-            <div className="absolute -top-4 -right-4 px-4 py-2 bg-pastel-purple rounded-full shadow-lg">
-              <span className="text-white text-sm font-medium">New record!</span>
             </div>
           </div>
         </div>

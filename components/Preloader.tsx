@@ -8,168 +8,69 @@ interface PreloaderProps {
   onComplete: () => void;
 }
 
-const marketingMessages = [
-  "Increase qualified leads",
-  "Improve conversion rate",
-  "Track ROI clearly",
-  "Scale paid ads profitably",
-];
-
 export default function Preloader({ onComplete }: PreloaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const iconRef = useRef<HTMLDivElement>(null);
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-  const [showTiles, setShowTiles] = useState(false);
+  const [hasChecked, setHasChecked] = useState(false);
 
   useEffect(() => {
-    if (prefersReducedMotion()) {
+    // Show only once per user session or until localStorage cleared
+    const seenIntro = localStorage.getItem("seenIntro");
+    if (seenIntro || prefersReducedMotion()) {
       onComplete();
       return;
     }
+    setHasChecked(true);
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         onComplete: () => {
+          localStorage.setItem("seenIntro", "true");
           gsap.to(containerRef.current, {
             opacity: 0,
-            scale: 0.95,
-            duration: 0.5,
-            ease: "power2.inOut",
+            duration: 0.3,
             onComplete,
           });
         },
       });
 
+      // Quick 0.7s max duration as requested
       tl.fromTo(
         iconRef.current,
-        { scale: 0.85, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }
+        { scale: 0.8, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" }
       );
-
-      tl.add(() => {
-        setShowTiles(true);
-      }, "+=0.3");
-
-      tl.fromTo(
-        ".preloader-tile",
-        { scale: 0, opacity: 0 },
-        {
-          scale: 1,
-          opacity: 1,
-          duration: 0.4,
-          stagger: 0.1,
-          ease: "back.out(1.7)",
-        }
-      );
-
-      const cycleTl = gsap.timeline({ repeat: 4 }); // Increase to 4 for longer loading feel
-
-      cycleTl.to(".preloader-tile", {
-        x: 0,
-        y: 0,
-        rotation: 0,
-        duration: 0.5,
-        ease: "power2.out",
-      });
-
-      cycleTl.to(".tiles-container", {
-        rotation: 25,
-        duration: 0.6,
-        ease: "power2.inOut",
-      });
-
-      cycleTl.to(
-        ".preloader-tile",
-        {
-          x: (i) => [8, -8, 8, -8][i],
-          y: (i) => [8, 8, -8, -8][i],
-          duration: 0.6,
-          ease: "power2.inOut",
-        },
-        "<"
-      );
-
-      cycleTl.to(".tiles-container", {
-        rotation: 0,
-        duration: 0.6,
-        ease: "power2.inOut",
-      });
-
-      cycleTl.to(
-        ".preloader-tile",
-        {
-          x: 0,
-          y: 0,
-          duration: 0.6,
-          ease: "power2.inOut",
-        },
-        "<"
-      );
-
-      cycleTl.add(() => {
-        setCurrentMessageIndex((prev) => (prev + 1) % marketingMessages.length);
-      }, 0.5);
-
-      tl.add(cycleTl, "+=0.2");
-      tl.to({}, { duration: 0.5 });
+      tl.to(iconRef.current, { scale: 1.1, opacity: 0, duration: 0.3, delay: 0.1 });
     }, containerRef);
 
     return () => ctx.revert();
   }, [onComplete]);
 
+  const handleSkip = () => {
+    localStorage.setItem("seenIntro", "true");
+    onComplete();
+  };
+
+  if (!hasChecked) return null;
+
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-[100] flex items-center justify-center pastel-gradient-bg"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black"
     >
       <div
         ref={iconRef}
-        className={`absolute transition-opacity duration-300 ${showTiles ? "opacity-0" : "opacity-100"
-          }`}
+        className="w-24 h-24 bg-white rounded-[2rem] flex items-center justify-center"
       >
-        <div className="w-24 h-24 bg-black rounded-[2rem] flex items-center justify-center">
-          <span className="text-white text-4xl font-bold">LG</span>
-        </div>
+        <span className="text-black text-4xl font-bold">LG</span>
       </div>
 
-      <div
-        className={`tiles-container relative transition-opacity duration-300 ${showTiles ? "opacity-100" : "opacity-0"
-          }`}
+      <button
+        onClick={handleSkip}
+        className="absolute bottom-10 px-6 py-2 text-white/50 hover:text-white transition-colors text-sm underline underline-offset-4"
       >
-        <div className="grid grid-cols-2 gap-2">
-          <div className="preloader-tile w-20 h-20 bg-black rounded-2xl flex items-center justify-center">
-            <span className="text-white text-xl font-bold">LG</span>
-          </div>
-          <div className="preloader-tile w-20 h-20 bg-black rounded-2xl flex items-center justify-center">
-            <svg
-              className="w-8 h-8 text-pastel-purple"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-            </svg>
-          </div>
-          <div className="preloader-tile w-20 h-20 bg-black rounded-2xl flex items-center justify-center p-2">
-            <span className="text-white text-[10px] leading-tight text-center font-medium">
-              {marketingMessages[currentMessageIndex].split(" ").slice(0, 2).join(" ")}
-            </span>
-          </div>
-          <div className="preloader-tile w-20 h-20 bg-black rounded-2xl flex items-center justify-center">
-            <svg
-              className="w-8 h-8 text-pastel-cyan"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M12 6v6l4 2" />
-            </svg>
-          </div>
-        </div>
-      </div>
+        Skip Intro
+      </button>
     </div>
   );
 }

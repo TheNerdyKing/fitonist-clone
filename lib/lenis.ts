@@ -11,24 +11,22 @@ export function useLenis() {
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const ENABLE_SMOOTH_SCROLL = false;
 
-    if (prefersReducedMotion) {
+    if (prefersReducedMotion || !ENABLE_SMOOTH_SCROLL) {
       return;
     }
 
     const lenis = new Lenis({
-      duration: 2.0, // Increase duration for slower/smoother scroll
+      duration: 1.0,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
-      touchMultiplier: 1.5, // Reduce touch multiplier
-      wheelMultiplier: 1.2, // Add wheel multiplier for finer control
-      lerp: 0.1, // Added lerp for additional smoothness
+      touchMultiplier: 1.5,
+      wheelMultiplier: 1.0,
+      lerp: 0.1,
     });
 
     lenisRef.current = lenis;

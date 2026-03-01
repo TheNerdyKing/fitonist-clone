@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLenis } from "@/lib/lenis";
 import Preloader from "@/components/Preloader";
 import Hero from "@/components/Hero";
@@ -31,6 +32,13 @@ export default function Home() {
 
   const handlePreloaderComplete = () => {
     setIsLoading(false);
+    // Give double refresh for security on layout stability
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 500);
   };
 
   return (

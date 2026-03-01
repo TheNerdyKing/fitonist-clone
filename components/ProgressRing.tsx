@@ -26,40 +26,51 @@ export default function ProgressRing() {
     if (prefersReducedMotion()) return;
 
     const ctx = gsap.context(() => {
-      if (ringRef.current) {
-        const circumference = 2 * Math.PI * 140;
-        gsap.set(ringRef.current, {
-          strokeDasharray: circumference,
-          strokeDashoffset: circumference,
-        });
+      let mm = gsap.matchMedia();
 
-        gsap.to(ringRef.current, {
-          strokeDashoffset: circumference * 0.4,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 60%",
-            end: "center center",
-            scrub: true,
-          },
-        });
-      }
+      mm.add("(min-width: 768px)", () => {
+        if (ringRef.current) {
+          const circumference = 2 * Math.PI * 140;
+          gsap.set(ringRef.current, {
+            strokeDasharray: circumference,
+            strokeDashoffset: circumference,
+          });
 
-      const dots = timelineRef.current?.querySelectorAll(".timeline-dot");
-      dots?.forEach((dot, index) => {
-        gsap.fromTo(
-          dot,
-          { scale: 0.8, opacity: 0.3 },
-          {
-            scale: 1,
-            opacity: 1,
+          gsap.to(ringRef.current, {
+            strokeDashoffset: circumference * 0.4,
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: `${20 + index * 15}% 70%`,
-              end: `${30 + index * 15}% 60%`,
-              scrub: true,
+              start: "top 60%",
+              end: "center center",
+              scrub: 1, // Smoother scrub
             },
-          }
-        );
+          });
+        }
+
+        const dots = timelineRef.current?.querySelectorAll(".timeline-dot");
+        dots?.forEach((dot, index) => {
+          gsap.fromTo(
+            dot,
+            { scale: 0.8, opacity: 0.3 },
+            {
+              scale: 1,
+              opacity: 1,
+              duration: 0.4,
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: `${20 + index * 10}% 70%`,
+                toggleActions: "play reverse play reverse",
+              },
+            }
+          );
+        });
+      });
+
+      mm.add("(max-width: 767px)", () => {
+        gsap.set(".timeline-dot", { scale: 1, opacity: 1 });
+        if (ringRef.current) {
+          gsap.set(ringRef.current, { strokeDashoffset: 140 * 2 * Math.PI * 0.4 });
+        }
       });
 
       gsap.fromTo(
@@ -136,11 +147,10 @@ export default function ProgressRing() {
             {timelineSteps.map((step, index) => (
               <div key={index} className="flex items-center gap-3">
                 <div
-                  className={`timeline-dot w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
-                    step.completed
+                  className={`timeline-dot w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${step.completed
                       ? "bg-pastel-purple"
                       : "bg-white/10 border border-white/20"
-                  }`}
+                    }`}
                 >
                   {step.completed ? (
                     <Check className="w-4 h-4 text-black" />
@@ -150,9 +160,8 @@ export default function ProgressRing() {
                 </div>
                 {index < timelineSteps.length - 1 && (
                   <div
-                    className={`w-8 h-0.5 ${
-                      step.completed ? "bg-pastel-purple/50" : "bg-white/10"
-                    }`}
+                    className={`w-8 h-0.5 ${step.completed ? "bg-pastel-purple/50" : "bg-white/10"
+                      }`}
                   />
                 )}
               </div>

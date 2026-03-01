@@ -30,33 +30,20 @@ export default function GoalStack() {
       lines.forEach((line, index) => {
         gsap.fromTo(
           line,
-          { opacity: 0.2, color: "#666" },
+          { opacity: 0.1, y: 30 },
           {
             opacity: 1,
-            color: "#fff",
+            y: 0,
+            duration: 0.4,
+            ease: "power2.out",
             scrollTrigger: {
-              trigger: sectionRef.current,
-              start: `${index * 20}% center`,
-              end: `${(index + 1) * 20}% center`,
-              scrub: true,
+              trigger: line,
+              start: "top 85%",
+              end: "bottom 15%",
+              toggleActions: "play reverse play reverse",
             },
           }
         );
-      });
-
-      lines.forEach((line, index) => {
-        if (index > 0) {
-          gsap.to(line, {
-            opacity: 0.2,
-            color: "#666",
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: `${(index + 1) * 20}% center`,
-              end: `${(index + 2) * 20}% center`,
-              scrub: true,
-            },
-          });
-        }
       });
 
       const badges = badgesRef.current?.querySelectorAll(".floating-badge");

@@ -21,131 +21,63 @@ export default function Hero() {
   const glowRingsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (prefersReducedMotion()) return;
+    if (prefersReducedMotion()) {
+      gsap.set([navRef.current, headlineRef.current, subtextRef.current, deviceRef.current, floatingCard1Ref.current, floatingCard2Ref.current], { opacity: 1, y: 0, scale: 1 });
+      return;
+    }
 
     const ctx = gsap.context(() => {
-      // Mouse interaction for device
-      const moveDevice = (e: MouseEvent) => {
-        const { clientX, clientY } = e;
-        const xPos = (clientX / window.innerWidth - 0.5) * 40;
-        const yPos = (clientY / window.innerHeight - 0.5) * 40;
+      let mm = gsap.matchMedia();
 
-        gsap.to(deviceRef.current, {
-          x: xPos,
-          y: yPos,
-          rotationY: xPos / 2,
-          rotationX: -yPos / 2,
-          duration: 1,
-          ease: "power2.out",
+      mm.add("(min-width: 768px)", () => {
+        // Desktop pinning and animations
+        const scrollTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top top",
+            end: "+=100%",
+            pin: true,
+            scrub: 1,
+            pinSpacing: true,
+          },
         });
+
+        scrollTl.to(navRef.current, { opacity: 0, y: -50 }, 0);
+        scrollTl.to(heroPanelRef.current, { y: "-20%", ease: "power2.inOut" }, 0);
+        scrollTl.to(deviceRef.current, { scale: 1.1, y: "-10%", rotationX: 5, ease: "power2.inOut" }, 0.1);
+        scrollTl.to(glowRingsRef.current, { opacity: 1, scale: 1.2 }, 0.2);
+        scrollTl.to([floatingCard1Ref.current, floatingCard2Ref.current], { opacity: 0 }, 0.1);
+      });
+
+      mm.add("(max-width: 767px)", () => {
+        // Mobile: No pinning, simple static state or light entry
+        gsap.set([navRef.current, headlineRef.current, subtextRef.current, deviceRef.current, floatingCard1Ref.current, floatingCard2Ref.current], { opacity: 1, y: 0, scale: 1 });
+      });
+
+      // Entry animations (Simplified & Faster)
+      const entryTl = gsap.timeline();
+
+      entryTl.fromTo(navRef.current, { y: -10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 });
+      entryTl.fromTo(headlineRef.current, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, "-=0.3");
+      entryTl.fromTo(subtextRef.current, { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 }, "-=0.3");
+      entryTl.fromTo(buttonsRef.current?.children || [], { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, stagger: 0.05 }, "-=0.2");
+      entryTl.fromTo(deviceRef.current, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, "-=0.3");
+      entryTl.fromTo([floatingCard1Ref.current, floatingCard2Ref.current], { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, stagger: 0.1 }, "-=0.4");
+
+      // Mouse interaction (Desktop only)
+      const moveDevice = (e: MouseEvent) => {
+        if (window.innerWidth < 768) return;
+        const { clientX, clientY } = e;
+        const xPos = (clientX / window.innerWidth - 0.5) * 20;
+        const yPos = (clientY / window.innerHeight - 0.5) * 20;
+        gsap.to(deviceRef.current, { x: xPos, y: yPos, rotationY: xPos / 4, rotationX: -yPos / 4, duration: 0.8, ease: "power2.out" });
       };
 
       window.addEventListener("mousemove", moveDevice);
-
-      const entryTl = gsap.timeline({ delay: 0.5 });
-
-      // ... existing entry animations ...
-      entryTl.fromTo(
-        navRef.current,
-        { y: -20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }
-      );
-
-      // Headline starts bold (no opacity-0 needed)
-      gsap.set(headlineRef.current, { opacity: 1, scale: 1 });
-
-      entryTl.fromTo(
-        subtextRef.current,
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" },
-        "-=0.4"
-      );
-      // ... rest of animations ...
-
-      entryTl.fromTo(
-        buttonsRef.current?.children || [],
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" },
-        "-=0.3"
-      );
-
-      entryTl.fromTo(
-        deviceRef.current,
-        { y: 60, opacity: 0, scale: 0.95 },
-        { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: "power2.out" },
-        "-=0.4"
-      );
-
-      entryTl.fromTo(
-        floatingCard1Ref.current,
-        { x: 30, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.6, ease: "back.out(1.7)" },
-        "-=0.5"
-      );
-
-      entryTl.fromTo(
-        floatingCard2Ref.current,
-        { x: -30, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.6, ease: "back.out(1.7)" },
-        "-=0.4"
-      );
-
-      window.addEventListener("mousemove", moveDevice);
-
-      const scrollTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "+=120%",
-          pin: true,
-          scrub: 1.0, // More lag for smoothness
-          pinSpacing: true,
-        },
-      });
-
-      scrollTl.to(navRef.current, {
-        opacity: 0,
-        y: -100,
-        ease: "power2.in",
-      }, 0);
-
-      scrollTl.to(headlineRef.current, {
-        opacity: 0,
-        y: -100,
-        scale: 0.9,
-        ease: "power2.inOut",
-      }, 0);
-
-      scrollTl.to(subtextRef.current, {
-        opacity: 0,
-        y: -50,
-        ease: "power2.inOut",
-      }, 0.1);
-
-      scrollTl.to(heroPanelRef.current, {
-        y: "-30%",
-        ease: "power2.inOut",
-      }, 0);
-
-      scrollTl.to(deviceRef.current, {
-        scale: 1.3,
-        y: "-15%",
-        rotationX: 10,
-        ease: "power2.inOut",
-      }, 0.1);
-
-      scrollTl.fromTo(
-        glowRingsRef.current,
-        { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, ease: "power2.out" },
-        0.3
-      );
-
-      scrollTl.to([floatingCard1Ref.current, floatingCard2Ref.current], {
-        opacity: 0,
-        ease: "power2.in",
-      }, 0.1);
-
+      return () => {
+        window.removeEventListener("mousemove", moveDevice);
+        mm.revert();
+      };
     }, sectionRef);
 
     return () => ctx.revert();
@@ -215,7 +147,7 @@ export default function Hero() {
 
           <p
             ref={subtextRef}
-            className="mt-6 text-lg md:text-xl text-black/70 text-center max-w-2xl opacity-0"
+            className="mt-6 text-lg md:text-xl text-black/70 text-center max-w-2xl"
           >
             Performance marketing + creative + CRO. We help brands scale profitably.
           </p>
@@ -229,7 +161,7 @@ export default function Hero() {
             </button>
           </div>
 
-          <div ref={deviceRef} className="relative mt-16 opacity-0">
+          <div ref={deviceRef} className="relative mt-16">
             <div className="relative w-[300px] md:w-[400px] h-[500px] md:h-[600px] bg-black rounded-[2.5rem] border-8 border-gray-800 shadow-2xl overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-b from-gray-900 to-black p-6">
                 <div className="flex items-center justify-between mb-6">
