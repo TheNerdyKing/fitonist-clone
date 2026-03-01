@@ -131,6 +131,21 @@ body {
   overflow: visible !important;
 }
 
+/* Hide Kimi Agent and other potential injected widgets */
+#kimi-agent, 
+.kimi-agent, 
+[id*="kimi"], 
+[class*="kimi"],
+#agent-buddy,
+.agent-buddy,
+iframe[src*="kimi"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+}
+
 /* Transform GPU acceleration */
 .gpu-accelerate {
   transform: translateZ(0);

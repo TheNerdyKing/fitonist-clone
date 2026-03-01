@@ -21,12 +21,14 @@ export function useLenis() {
     }
 
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 2.0, // Increase duration for slower/smoother scroll
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
-      touchMultiplier: 2,
+      touchMultiplier: 1.5, // Reduce touch multiplier
+      wheelMultiplier: 1.2, // Add wheel multiplier for finer control
+      lerp: 0.1, // Added lerp for additional smoothness
     });
 
     lenisRef.current = lenis;

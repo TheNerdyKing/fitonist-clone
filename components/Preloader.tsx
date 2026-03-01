@@ -62,7 +62,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
         }
       );
 
-      const cycleTl = gsap.timeline({ repeat: 2 });
+      const cycleTl = gsap.timeline({ repeat: 4 }); // Increase to 4 for longer loading feel
 
       cycleTl.to(".preloader-tile", {
         x: 0,
@@ -124,9 +124,8 @@ export default function Preloader({ onComplete }: PreloaderProps) {
     >
       <div
         ref={iconRef}
-        className={`absolute transition-opacity duration-300 ${
-          showTiles ? "opacity-0" : "opacity-100"
-        }`}
+        className={`absolute transition-opacity duration-300 ${showTiles ? "opacity-0" : "opacity-100"
+          }`}
       >
         <div className="w-24 h-24 bg-black rounded-[2rem] flex items-center justify-center">
           <span className="text-white text-4xl font-bold">LG</span>
@@ -134,9 +133,8 @@ export default function Preloader({ onComplete }: PreloaderProps) {
       </div>
 
       <div
-        className={`tiles-container relative transition-opacity duration-300 ${
-          showTiles ? "opacity-100" : "opacity-0"
-        }`}
+        className={`tiles-container relative transition-opacity duration-300 ${showTiles ? "opacity-100" : "opacity-0"
+          }`}
       >
         <div className="grid grid-cols-2 gap-2">
           <div className="preloader-tile w-20 h-20 bg-black rounded-2xl flex items-center justify-center">

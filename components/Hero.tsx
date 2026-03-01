@@ -24,20 +24,35 @@ export default function Hero() {
     if (prefersReducedMotion()) return;
 
     const ctx = gsap.context(() => {
+      // Mouse interaction for device
+      const moveDevice = (e: MouseEvent) => {
+        const { clientX, clientY } = e;
+        const xPos = (clientX / window.innerWidth - 0.5) * 40;
+        const yPos = (clientY / window.innerHeight - 0.5) * 40;
+
+        gsap.to(deviceRef.current, {
+          x: xPos,
+          y: yPos,
+          rotationY: xPos / 2,
+          rotationX: -yPos / 2,
+          duration: 1,
+          ease: "power2.out",
+        });
+      };
+
+      window.addEventListener("mousemove", moveDevice);
+
       const entryTl = gsap.timeline({ delay: 0.5 });
 
+      // ... existing entry animations ...
       entryTl.fromTo(
         navRef.current,
         { y: -20, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }
       );
 
-      entryTl.fromTo(
-        headlineRef.current,
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.7, ease: "power2.out" },
-        "-=0.3"
-      );
+      // Headline starts bold (no opacity-0 needed)
+      gsap.set(headlineRef.current, { opacity: 1, scale: 1 });
 
       entryTl.fromTo(
         subtextRef.current,
@@ -45,6 +60,7 @@ export default function Hero() {
         { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" },
         "-=0.4"
       );
+      // ... rest of animations ...
 
       entryTl.fromTo(
         buttonsRef.current?.children || [],
@@ -74,27 +90,37 @@ export default function Hero() {
         "-=0.4"
       );
 
+      window.addEventListener("mousemove", moveDevice);
+
       const scrollTl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
           end: "+=120%",
           pin: true,
-          scrub: 0.5,
+          scrub: 1.0, // More lag for smoothness
           pinSpacing: true,
         },
       });
 
       scrollTl.to(navRef.current, {
         opacity: 0,
-        y: -20,
+        y: -100,
         ease: "power2.in",
       }, 0);
 
-      scrollTl.to([headlineRef.current, subtextRef.current], {
-        opacity: 0.3,
-        ease: "power2.in",
+      scrollTl.to(headlineRef.current, {
+        opacity: 0,
+        y: -100,
+        scale: 0.9,
+        ease: "power2.inOut",
       }, 0);
+
+      scrollTl.to(subtextRef.current, {
+        opacity: 0,
+        y: -50,
+        ease: "power2.inOut",
+      }, 0.1);
 
       scrollTl.to(heroPanelRef.current, {
         y: "-30%",
@@ -102,10 +128,11 @@ export default function Hero() {
       }, 0);
 
       scrollTl.to(deviceRef.current, {
-        scale: 1.1,
-        y: "-10%",
+        scale: 1.3,
+        y: "-15%",
+        rotationX: 10,
         ease: "power2.inOut",
-      }, 0.2);
+      }, 0.1);
 
       scrollTl.fromTo(
         glowRingsRef.current,
@@ -181,7 +208,7 @@ export default function Hero() {
         <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] px-6 py-20">
           <h1
             ref={headlineRef}
-            className="text-4xl md:text-6xl lg:text-7xl font-bold text-black text-center max-w-4xl leading-tight opacity-0"
+            className="text-4xl md:text-6xl lg:text-7xl font-bold text-black text-center max-w-4xl leading-tight"
           >
             Launch campaigns that actually convert
           </h1>
@@ -276,14 +303,9 @@ export default function Hero() {
       <div
         ref={glowRingsRef}
         className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0"
-        style={{ top: "30%" }}
+        style={{ top: "35%", scale: 1.5 }}
       >
-        <div className="relative w-[600px] h-[600px]">
-          <div className="absolute inset-0 border border-purple-500/20 rounded-full" />
-          <div className="absolute inset-8 border border-blue-500/20 rounded-full" />
-          <div className="absolute inset-16 border border-teal-500/20 rounded-full" />
-          <div className="absolute inset-24 border border-purple-500/10 rounded-full" />
-        </div>
+        <div className="relative w-[800px] h-[800px] bg-pastel-purple/10 rounded-full blur-[120px]" />
       </div>
 
       <div className="absolute right-1/4 top-1/2 w-2 h-2 bg-pastel-purple rounded-full shadow-[0_0_20px_rgba(179,71,217,0.8)] animate-pulse-glow" />

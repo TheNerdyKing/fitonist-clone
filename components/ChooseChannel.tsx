@@ -95,18 +95,53 @@ export default function ChooseChannel() {
 
           <div
             ref={sticker1Ref}
-            className="absolute top-0 right-[10%] md:right-[25%] px-6 py-3 bg-pastel-purple rounded-2xl shadow-lg opacity-0"
+            className="absolute top-0 right-[10%] md:right-[25%] px-6 py-3 bg-pastel-purple rounded-2xl shadow-lg opacity-0 z-20"
             style={{ transform: "rotate(-8deg)" }}
           >
-            <span className="text-black font-semibold text-lg">SEO</span>
+            <span className="text-black font-semibold text-lg">SEO & Content</span>
           </div>
 
           <div
             ref={sticker2Ref}
-            className="absolute top-16 right-[5%] md:right-[15%] px-6 py-3 bg-pastel-blue rounded-2xl shadow-lg opacity-0"
+            className="absolute top-16 right-[5%] md:right-[15%] px-6 py-3 bg-pastel-blue rounded-2xl shadow-lg opacity-0 z-20"
             style={{ transform: "rotate(5deg)" }}
           >
             <span className="text-black font-semibold text-lg">Paid Ads</span>
+          </div>
+
+          <div
+            className="absolute -bottom-10 left-[5%] px-6 py-3 bg-pastel-green rounded-2xl shadow-lg z-20 hidden md:block"
+            style={{ transform: "rotate(-5deg)" }}
+          >
+            <span className="text-black font-semibold text-lg">CRO & Funnels</span>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 mt-24">
+            {[
+              {
+                title: "Inbound Marketing",
+                desc: "Drive traffic that actually wants to buy your product.",
+                color: "bg-pastel-blue/10",
+              },
+              {
+                title: "Scale Paid Channels",
+                desc: "High ROAS campaigns on Google, Meta, and TikTok.",
+                color: "bg-pastel-purple/10",
+              },
+              {
+                title: "Conversion Design",
+                desc: "Landing pages designed to maximize your lead volume.",
+                color: "bg-pastel-green/10",
+              },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className={`p-10 rounded-[2.5rem] ${item.color} border border-black/5 hover:border-black/10 transition-colors`}
+              >
+                <h4 className="text-2xl font-bold text-black mb-4">{item.title}</h4>
+                <p className="text-gray-600">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
