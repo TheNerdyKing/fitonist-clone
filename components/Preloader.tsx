@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState, useLayoutEffect } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { prefersReducedMotion } from "@/lib/gsap";
@@ -12,16 +12,20 @@ interface PreloaderProps {
 export default function Preloader({ onComplete }: PreloaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const iconRef = useRef<HTMLDivElement>(null);
-  const [hasChecked, setHasChecked] = useState(false);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
 
-  useGSAP(() => {
-    // Show only once per user session or until localStorage cleared
+  // Use layout effect to synchronously check local storage before painting
+  useLayoutEffect(() => {
     const seenIntro = localStorage.getItem("seenIntro");
     if (seenIntro || prefersReducedMotion()) {
       onComplete();
-      return;
+    } else {
+      setShouldAnimate(true);
     }
-    setHasChecked(true);
+  }, [onComplete]);
+
+  useGSAP(() => {
+    if (!shouldAnimate) return;
 
     const tl = gsap.timeline({
       onComplete: () => {
@@ -42,14 +46,17 @@ export default function Preloader({ onComplete }: PreloaderProps) {
     );
     tl.to(iconRef.current, { scale: 1.1, opacity: 0, duration: 0.3, delay: 0.1 });
 
-  }, { scope: containerRef, dependencies: [onComplete] });
+  }, { scope: containerRef, dependencies: [shouldAnimate, onComplete] });
 
   const handleSkip = () => {
     localStorage.setItem("seenIntro", "true");
     onComplete();
   };
 
-  if (!hasChecked) return null;
+  // Prevent flashing of preloader content before the layout effect fires
+  if (!shouldAnimate) {
+    return <div className="fixed inset-0 z-[100] bg-black" />; // Keep background black until unmounted
+  }
 
   return (
     <div
@@ -60,14 +67,14 @@ export default function Preloader({ onComplete }: PreloaderProps) {
         ref={iconRef}
         className="w-24 h-24 bg-white rounded-[2rem] flex items-center justify-center"
       >
-        <span className="text-black text-4xl font-bold">LG</span>
+        <span className="text-black text-4xl font-bold">SX</span>
       </div>
 
       <button
         onClick={handleSkip}
         className="absolute bottom-10 px-6 py-2 text-white/50 hover:text-white transition-colors text-sm underline underline-offset-4"
       >
-        Skip Intro
+        דלג
       </button>
     </div>
   );

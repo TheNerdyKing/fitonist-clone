@@ -32,6 +32,7 @@ export default function Home() {
 
   const handlePreloaderComplete = () => {
     setIsLoading(false);
+
     // Give double refresh for security on layout stability
     setTimeout(() => {
       ScrollTrigger.refresh();
@@ -39,6 +40,13 @@ export default function Home() {
     setTimeout(() => {
       ScrollTrigger.refresh();
     }, 500);
+
+    // Specifically wait for all fonts to load to prevent layout shifts on Vercel
+    if (typeof document !== "undefined" && document.fonts) {
+      document.fonts.ready.then(() => {
+        ScrollTrigger.refresh();
+      });
+    }
   };
 
   return (
