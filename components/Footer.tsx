@@ -3,27 +3,27 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import { prefersReducedMotion } from "@/lib/gsap";
-import { Twitter, Instagram, Linkedin } from "lucide-react";
+import { Mail, Phone, MessageCircle } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const footerLinks = {
   services: [
-    { label: "Paid Ads", href: "#" },
-    { label: "SEO & Content", href: "#" },
-    { label: "Creative", href: "#" },
-    { label: "Automation", href: "#" },
+    { label: "ניהול רשתות חברתיות", href: "#services" },
+    { label: "קידום ממומן במטא", href: "#services" },
+    { label: "קידום ממומן בגוגל", href: "#services" },
+    { label: "חבילת שיווק מלאה", href: "#services" },
   ],
   company: [
-    { label: "Case Studies", href: "#" },
-    { label: "Pricing", href: "#pricing" },
-    { label: "About", href: "#" },
-    { label: "Contact", href: "#contact" },
+    { label: "המלצות", href: "#recommendations" },
+    { label: "מי אנחנו", href: "#about" },
+    { label: "צור קשר", href: "#contact" },
   ],
   legal: [
-    { label: "Privacy Policy", href: "#" },
-    { label: "Terms of Service", href: "#" },
+    { label: "מדיניות פרטיות", href: "#" },
+    { label: "תנאי שימוש", href: "#" },
   ],
 };
 
@@ -31,30 +31,26 @@ export default function Footer() {
   const footerRef = useRef<HTMLElement>(null);
   const pillRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
     if (prefersReducedMotion()) return;
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        pillRef.current,
-        { y: 30, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.6,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: footerRef.current,
-            start: "top 90%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
+    gsap.fromTo(
+      pillRef.current,
+      { y: 30, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.6,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: "top 90%",
+          toggleActions: "play none none reverse",
+        },
+      }
+    );
 
-    }, footerRef);
-
-    return () => ctx.revert();
-  }, []);
+  }, { scope: footerRef });
 
   return (
     <footer
@@ -68,14 +64,14 @@ export default function Footer() {
         >
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-orange-500 rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(249,115,22,0.3)]">
-              <span className="text-black font-bold">LG</span>
+              <span className="text-black font-bold text-lg">SX</span>
             </div>
-            <span className="text-white text-xl font-bold italic tracking-tight">Scale your brand today.</span>
+            <span className="text-white text-xl font-bold italic tracking-tight">הזמן שלך לצמוח.</span>
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="px-8 py-4 bg-orange-500 text-black rounded-full font-bold hover:bg-orange-400 transition-all text-sm">
-              Talk to an Expert
+            <button onClick={() => window.open('https://wa.me/972552664456', '_blank')} className="px-8 py-4 bg-orange-500 text-black rounded-full font-bold hover:bg-orange-400 transition-all text-sm cursor-pointer">
+              לייעוץ מקצועי
             </button>
           </div>
         </div>
@@ -84,17 +80,19 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-6">
               <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                <span className="text-black text-sm font-bold">LG</span>
+                <span className="text-black text-sm font-bold">SX</span>
               </div>
-              <span className="text-white font-bold tracking-tight">LumaGrowth</span>
+              <span className="text-white font-bold tracking-tight">STONIX</span>
             </div>
-            <p className="text-white/30 text-sm leading-relaxed max-w-[200px]">
-              Next-gen performance marketing that scales brands profitably.
-            </p>
+            <div className="text-white/40 text-sm leading-relaxed max-w-[200px] flex flex-col gap-2">
+              <p dir="rtl">שדרות ההסתדרות 236, חיפה</p>
+              <p dir="ltr" className="text-right">055-2664456</p>
+              <p dir="ltr" className="text-right">a.s.mediagroup2023@gmail.com</p>
+            </div>
           </div>
 
           <div>
-            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-6">Services</h4>
+            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-6">שירותים</h4>
             <ul className="space-y-4">
               {footerLinks.services.map((link) => (
                 <li key={link.label}>
@@ -110,7 +108,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-6">Company</h4>
+            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-6">STONIX</h4>
             <ul className="space-y-4">
               {footerLinks.company.map((link) => (
                 <li key={link.label}>
@@ -126,7 +124,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-6">Legal</h4>
+            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-6">משפטי</h4>
             <ul className="space-y-4 mb-8">
               {footerLinks.legal.map((link) => (
                 <li key={link.label}>
@@ -141,14 +139,14 @@ export default function Footer() {
             </ul>
 
             <div className="flex items-center gap-3">
-              <a href="#" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-orange-500/20 hover:text-orange-500 transition-all text-white/40">
-                <Twitter className="w-4 h-4" />
+              <a href="mailto:a.s.mediagroup2023@gmail.com" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-orange-500/20 hover:text-orange-500 transition-all text-white/40">
+                <Mail className="w-4 h-4" />
               </a>
-              <a href="#" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-orange-500/20 hover:text-orange-500 transition-all text-white/40">
-                <Instagram className="w-4 h-4" />
+              <a href="tel:0552664456" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-orange-500/20 hover:text-orange-500 transition-all text-white/40">
+                <Phone className="w-4 h-4" />
               </a>
-              <a href="#" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-orange-500/20 hover:text-orange-500 transition-all text-white/40">
-                <Linkedin className="w-4 h-4" />
+              <a href="https://wa.me/972552664456" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-orange-500/20 hover:text-orange-500 transition-all text-white/40">
+                <MessageCircle className="w-4 h-4" />
               </a>
             </div>
           </div>
@@ -156,11 +154,11 @@ export default function Footer() {
 
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-white/20 text-[10px] uppercase font-bold tracking-[0.2em]">
-            ©2025 LumaGrowth. Built for the bold.
+            ©2025 STONIX. כל הזכויות שמורות.
           </p>
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-            <p className="text-white/20 text-[10px] uppercase font-bold tracking-[0.2em]">Systems Operational</p>
+            <p className="text-white/20 text-[10px] uppercase font-bold tracking-[0.2em]">מערכות מאובטחות</p>
           </div>
         </div>
       </div>

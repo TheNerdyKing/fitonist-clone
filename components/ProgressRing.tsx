@@ -3,16 +3,17 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import { prefersReducedMotion } from "@/lib/gsap";
 import { Check } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const timelineSteps = [
-  { label: "Setup" },
-  { label: "Launch" },
-  { label: "Optimize" },
-  { label: "Scale" },
+  { label: "הגדרה" },
+  { label: "השקה" },
+  { label: "אופטימיזציה" },
+  { label: "צמיחה" },
 ];
 
 export default function ProgressRing() {
@@ -22,114 +23,110 @@ export default function ProgressRing() {
   const outerRingRef = useRef<SVGCircleElement>(null);
   const glowCoreRef = useRef<HTMLDivElement>(null);
 
-  useLayoutEffect(() => {
+  useGSAP(() => {
     if (prefersReducedMotion()) return;
 
-    const ctx = gsap.context(() => {
-      let mm = gsap.matchMedia();
+    let mm = gsap.matchMedia();
 
-      mm.add("(min-width: 768px)", () => {
-        // Safe checks
-        if (!ringRef.current || !outerRingRef.current) return;
+    mm.add("(min-width: 768px)", () => {
+      // Safe checks
+      if (!ringRef.current || !outerRingRef.current) return;
 
-        const circumference = 2 * Math.PI * 140;
-        const outerCircumference = 2 * Math.PI * 170;
+      const circumference = 2 * Math.PI * 140;
+      const outerCircumference = 2 * Math.PI * 170;
 
-        // Force initial states robustly via GSAP, protected from null targets
-        gsap.set(ringRef.current, { strokeDasharray: circumference, strokeDashoffset: circumference });
-        gsap.set(outerRingRef.current, { strokeDasharray: outerCircumference, strokeDashoffset: outerCircumference });
+      // Force initial states robustly via GSAP, protected from null targets
+      gsap.set(ringRef.current, { strokeDasharray: circumference, strokeDashoffset: circumference });
+      gsap.set(outerRingRef.current, { strokeDasharray: outerCircumference, strokeDashoffset: outerCircumference });
 
-        const bgs = gsap.utils.toArray(".step-bg");
-        const dots = gsap.utils.toArray(".step-dot");
-        const checks = gsap.utils.toArray(".step-check");
-        const lines = gsap.utils.toArray(".step-line");
+      const bgs = gsap.utils.toArray(".step-bg");
+      const dots = gsap.utils.toArray(".step-dot");
+      const checks = gsap.utils.toArray(".step-check");
+      const lines = gsap.utils.toArray(".step-line");
 
-        if (bgs.length) gsap.set(bgs, { opacity: 0 });
-        if (dots.length) gsap.set(dots, { opacity: 1, scale: 1 });
-        if (checks.length) gsap.set(checks, { opacity: 0, scale: 0 });
-        if (lines.length) gsap.set(lines, { scaleX: 0, transformOrigin: "left center" });
+      if (bgs.length) gsap.set(bgs, { opacity: 0 });
+      if (dots.length) gsap.set(dots, { opacity: 1, scale: 1 });
+      if (checks.length) gsap.set(checks, { opacity: 0, scale: 0 });
+      if (lines.length) gsap.set(lines, { scaleX: 0, transformOrigin: "right center" });
 
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 60%",    // Starts slightly before section is centered
-            end: "bottom 80%",   // Ends when scrolling past it
-            scrub: 1,            // Smooth 1-second delay scrub
-          },
-        });
-
-        // Main scrub timeline filling paths
-        tl.to(ringRef.current, { strokeDashoffset: circumference * 0.15, duration: 4, ease: "none" }, 0);
-        tl.to(outerRingRef.current, { strokeDashoffset: outerCircumference * 0.3, duration: 4, ease: "none" }, 0);
-
-        if (glowCoreRef.current) {
-          tl.to(glowCoreRef.current, { scale: 1.2, opacity: 0.8, duration: 4, ease: "none" }, 0);
-        }
-
-        // Spin the outer ring infinitely, INDEPENDENT of scrub timeline
-        gsap.to(outerRingRef.current, {
-          rotation: "+=360",
-          svgOrigin: "250 250", // Correctly rotate around SVG coordinate center
-          repeat: -1,
-          duration: 20,
-          ease: "linear"
-        });
-
-        // Sequence the 4 dots over the same 4-second timeline
-        const markers = gsap.utils.toArray<HTMLElement>(".step-wrapper");
-
-        markers.forEach((marker, i) => {
-          const bg = marker.querySelector(".step-bg");
-          const dot = marker.querySelector(".step-dot");
-          const check = marker.querySelector(".step-check");
-          const line = marker.querySelector(".step-line");
-
-          const startTime = i * 1; // 0s, 1s, 2s, 3s
-
-          if (bg) tl.to(bg, { opacity: 1, duration: 0.2 }, startTime);
-          if (dot) tl.to(dot, { opacity: 0, scale: 0, duration: 0.2 }, startTime);
-          if (check) tl.to(check, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2.5)" }, startTime);
-          if (line) tl.to(line, { scaleX: 1, duration: 0.8, ease: "power2.inOut" }, startTime + 0.2);
-        });
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 60%",    // Starts slightly before section is centered
+          end: "bottom 80%",   // Ends when scrolling past it
+          scrub: 1,            // Smooth 1-second delay scrub
+        },
       });
 
-      mm.add("(max-width: 767px)", () => {
-        if (ringRef.current) gsap.set(ringRef.current, { strokeDashoffset: 140 * 2 * Math.PI * 0.15 });
+      // Main scrub timeline filling paths
+      tl.to(ringRef.current, { strokeDashoffset: circumference * 0.15, duration: 4, ease: "none" }, 0);
+      tl.to(outerRingRef.current, { strokeDashoffset: outerCircumference * 0.3, duration: 4, ease: "none" }, 0);
 
-        const bgs = gsap.utils.toArray(".step-bg");
-        const dots = gsap.utils.toArray(".step-dot");
-        const checks = gsap.utils.toArray(".step-check");
-        const lines = gsap.utils.toArray(".step-line");
-
-        if (bgs.length) gsap.set(bgs, { opacity: 1 });
-        if (dots.length) gsap.set(dots, { opacity: 0, scale: 0 });
-        if (checks.length) gsap.set(checks, { opacity: 1, scale: 1 });
-        if (lines.length) gsap.set(lines, { scaleX: 1 });
-      });
-
-      // Entry card floating animation
-      if (cardRef.current) {
-        gsap.fromTo(
-          cardRef.current,
-          { y: 50, opacity: 0, scale: 0.95 },
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 1.2,
-            ease: "expo.out",
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top 70%",
-            },
-          }
-        );
+      if (glowCoreRef.current) {
+        tl.to(glowCoreRef.current, { scale: 1.2, opacity: 0.8, duration: 4, ease: "none" }, 0);
       }
 
-    }, sectionRef);
+      // Spin the outer ring infinitely, INDEPENDENT of scrub timeline
+      gsap.to(outerRingRef.current, {
+        rotation: "+=360",
+        svgOrigin: "250 250", // Correctly rotate around SVG coordinate center
+        repeat: -1,
+        duration: 20,
+        ease: "linear"
+      });
 
-    return () => ctx.revert();
-  }, []);
+      // Sequence the 4 dots over the same 4-second timeline
+      const markers = gsap.utils.toArray<HTMLElement>(".step-wrapper");
+
+      markers.forEach((marker, i) => {
+        const bg = marker.querySelector(".step-bg");
+        const dot = marker.querySelector(".step-dot");
+        const check = marker.querySelector(".step-check");
+        const line = marker.querySelector(".step-line");
+
+        const startTime = i * 1; // 0s, 1s, 2s, 3s
+
+        if (bg) tl.to(bg, { opacity: 1, duration: 0.2 }, startTime);
+        if (dot) tl.to(dot, { opacity: 0, scale: 0, duration: 0.2 }, startTime);
+        if (check) tl.to(check, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2.5)" }, startTime);
+        if (line) tl.to(line, { scaleX: 1, duration: 0.8, ease: "power2.inOut" }, startTime + 0.2);
+      });
+    });
+
+    mm.add("(max-width: 767px)", () => {
+      if (ringRef.current) gsap.set(ringRef.current, { strokeDashoffset: 140 * 2 * Math.PI * 0.15 });
+
+      const bgs = gsap.utils.toArray(".step-bg");
+      const dots = gsap.utils.toArray(".step-dot");
+      const checks = gsap.utils.toArray(".step-check");
+      const lines = gsap.utils.toArray(".step-line");
+
+      if (bgs.length) gsap.set(bgs, { opacity: 1 });
+      if (dots.length) gsap.set(dots, { opacity: 0, scale: 0 });
+      if (checks.length) gsap.set(checks, { opacity: 1, scale: 1 });
+      if (lines.length) gsap.set(lines, { scaleX: 1 });
+    });
+
+    // Entry card floating animation
+    if (cardRef.current) {
+      gsap.fromTo(
+        cardRef.current,
+        { y: 50, opacity: 0, scale: 0.95 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 1.2,
+          ease: "expo.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 70%",
+          },
+        }
+      );
+    }
+
+  }, { scope: sectionRef });
 
   return (
     <section
@@ -204,12 +201,12 @@ export default function ProgressRing() {
 
         <div className="relative z-10 flex flex-col items-center justify-center h-full pt-8 pointer-events-none">
           <h2 className="text-4xl md:text-5xl font-black text-white text-center tracking-tight mb-2">
-            Scale <br className="md:hidden" />
+            צמיחה <br className="md:hidden" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">
-              Instantly.
+              מהירה.
             </span>
           </h2>
-          <p className="text-white/40 font-mono text-sm tracking-widest uppercase mb-12">System Output: Max</p>
+          <p className="text-white/40 font-mono text-sm tracking-widest uppercase mb-12">יעילות מערכת: מקסימלית</p>
 
           <div className="flex items-center gap-2 md:gap-4 bg-black/40 p-2 md:p-3 rounded-2xl backdrop-blur-md border border-white/5 pointer-events-auto">
             {timelineSteps.map((_, idx) => (
@@ -228,7 +225,7 @@ export default function ProgressRing() {
                 {/* Connecting Line */}
                 {idx < timelineSteps.length - 1 && (
                   <div className="relative h-px w-6 md:w-12 bg-white/5">
-                    <div className="step-line border-t border-orange-500/60 absolute inset-0 drop-shadow-[0_0_8px_rgba(249,115,22,1)] origin-left scale-x-0" />
+                    <div className="step-line border-t border-orange-500/60 absolute inset-0 drop-shadow-[0_0_8px_rgba(249,115,22,1)] origin-right scale-x-0" />
                   </div>
                 )}
               </div>

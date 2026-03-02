@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import { prefersReducedMotion } from "@/lib/gsap";
 import { Target, TrendingUp, Users, Zap, ArrowRight } from "lucide-react";
 
@@ -10,34 +11,34 @@ gsap.registerPlugin(ScrollTrigger);
 
 const goals = [
   {
-    text: "Generate Leads",
+    text: "ייצור לידים",
     icon: Users,
     metric: "50K+",
-    sub: "Qualified leads captured",
+    sub: "לידים איכותיים",
     color: "from-blue-500 to-cyan-400",
     shadow: "shadow-cyan-500/20"
   },
   {
-    text: "Track ROI",
+    text: "החזר השקעה",
     icon: Target,
     metric: "+147%",
-    sub: "Average return on spend",
+    sub: "החזר ממוצע על הוצאות",
     color: "from-orange-400 to-orange-600",
     shadow: "shadow-orange-500/20"
   },
   {
-    text: "Boost Conversion",
+    text: "יחס המרה",
     icon: TrendingUp,
     metric: "3.2x",
-    sub: "Increase in conversion rate",
+    sub: "גידול ביחס ההמרה",
     color: "from-emerald-400 to-emerald-600",
     shadow: "shadow-emerald-500/20"
   },
   {
-    text: "Scale Instantly",
+    text: "צמיחה מהירה",
     icon: Zap,
     metric: "2x",
-    sub: "Faster growth trajectory",
+    sub: "מסלול צמיחה מהיר יותר",
     color: "from-purple-400 to-purple-600",
     shadow: "shadow-purple-500/20"
   },
@@ -47,41 +48,37 @@ export default function GoalStack() {
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
     if (prefersReducedMotion()) return;
 
-    const ctx = gsap.context(() => {
-      const rows = containerRef.current?.querySelectorAll(".goal-row");
+    const rows = containerRef.current?.querySelectorAll(".goal-row");
 
-      rows?.forEach((row) => {
-        const textWrapper = row.querySelector(".text-wrapper");
-        const metricCard = row.querySelector(".metric-card");
-        const details = row.querySelector(".details");
+    rows?.forEach((row) => {
+      const textWrapper = row.querySelector(".text-wrapper");
+      const metricCard = row.querySelector(".metric-card");
+      const details = row.querySelector(".details");
 
-        // Set initial states
-        gsap.set(textWrapper, { opacity: 0.2, x: -40, scale: 0.95 });
-        gsap.set(metricCard, { opacity: 0, x: 40, scale: 0.9 });
-        gsap.set(details, { opacity: 0, height: 0, margin: 0 });
+      // Set initial states
+      gsap.set(textWrapper, { opacity: 0.2, x: -40, scale: 0.95 });
+      gsap.set(metricCard, { opacity: 0, x: 40, scale: 0.9 });
+      gsap.set(details, { opacity: 0, height: 0, margin: 0 });
 
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: row,
-            start: "top 60%", // When top of row hits 60% down the screen
-            end: "bottom 40%", // When bottom of row hits 40% down the screen
-            toggleActions: "play reverse play reverse",
-          },
-        });
-
-        tl.to(textWrapper, { opacity: 1, x: 0, scale: 1, duration: 0.6, ease: "back.out(1.5)" }, 0)
-          .to(metricCard, { opacity: 1, x: 0, scale: 1, duration: 0.5, ease: "back.out(1.2)" }, 0.1)
-          .to(details, { opacity: 1, height: "auto", marginTop: "16px", duration: 0.4, ease: "power2.out" }, 0.2);
-
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: row,
+          start: "top 60%", // When top of row hits 60% down the screen
+          end: "bottom 40%", // When bottom of row hits 40% down the screen
+          toggleActions: "play reverse play reverse",
+        },
       });
 
-    }, sectionRef);
+      tl.to(textWrapper, { opacity: 1, x: 0, scale: 1, duration: 0.6, ease: "back.out(1.5)" }, 0)
+        .to(metricCard, { opacity: 1, x: 0, scale: 1, duration: 0.5, ease: "back.out(1.2)" }, 0.1)
+        .to(details, { opacity: 1, height: "auto", marginTop: "16px", duration: 0.4, ease: "power2.out" }, 0.2);
 
-    return () => ctx.revert();
-  }, []);
+    });
+
+  }, { scope: sectionRef });
 
   return (
     <section
@@ -95,12 +92,12 @@ export default function GoalStack() {
 
       <div className="relative z-10 max-w-5xl mx-auto px-6">
 
-        <div className="mb-24 md:mb-32 max-w-2xl">
+        <div className="mb-24 md:mb-32 max-w-3xl">
           <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
-            Built for <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">performance.</span>
+            מי <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">אנחנו?</span>
           </h2>
           <p className="text-lg md:text-xl text-white/40 leading-relaxed font-light">
-            Everything you need to stop guessing and start scaling. We align your entire funnel to hit core business metrics.
+            ב-STONIX, אנחנו מתמחים בבניית אסטרטגיות שיווקיות שמייצרות תוצאות אמיתיות לעסקים. יותר לידים, יותר לקוחות, יותר הכנסות – דרך עבודה מדויקת, חכמה, ומבוססת נתונים.
           </p>
         </div>
 
@@ -135,9 +132,9 @@ export default function GoalStack() {
                   </div>
 
                   {/* RIGHT: Metric Card */}
-                  <div className="metric-card md:ml-auto">
+                  <div className="metric-card md:mr-auto">
                     <div className="bg-[#111] border border-white/5 rounded-2xl px-6 py-4 flex flex-col justify-center min-w-[160px]">
-                      <span className="text-xs text-white/30 uppercase tracking-widest font-mono mb-1">Impact</span>
+                      <span className="text-xs text-white/30 uppercase tracking-widest font-mono mb-1">השפעה</span>
                       <span className={`text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br ${goal.color}`}>
                         {goal.metric}
                       </span>

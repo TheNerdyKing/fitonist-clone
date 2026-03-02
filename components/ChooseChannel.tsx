@@ -3,8 +3,9 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import { prefersReducedMotion } from "@/lib/gsap";
-import { Search, Target, Palette, Settings } from "lucide-react";
+import { Search, Target, Palette, Settings, Users, Zap, Camera, Image, Video, PenTool, LineChart, Package } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,50 +14,46 @@ export default function ChooseChannel() {
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
     if (prefersReducedMotion()) return;
 
-    const ctx = gsap.context(() => {
+    gsap.fromTo(
+      headlineRef.current,
+      { y: 50, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 70%",
+          toggleActions: "play none none reverse",
+        },
+      }
+    );
+
+    const cards = cardsRef.current?.querySelectorAll(".feature-card");
+    if (cards) {
       gsap.fromTo(
-        headlineRef.current,
-        { y: 50, opacity: 0 },
+        cards,
+        { y: 30, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          duration: 0.8,
+          duration: 0.6,
+          stagger: 0.1,
           ease: "power2.out",
           scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 70%",
+            trigger: cardsRef.current,
+            start: "top 80%",
             toggleActions: "play none none reverse",
           },
         }
       );
+    }
 
-      const cards = cardsRef.current?.querySelectorAll(".feature-card");
-      if (cards) {
-        gsap.fromTo(
-          cards,
-          { y: 30, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.6,
-            stagger: 0.1,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: cardsRef.current,
-              start: "top 80%",
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
-      }
-
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+  }, { scope: sectionRef });
 
   return (
     <section
@@ -70,48 +67,43 @@ export default function ChooseChannel() {
         <div className="flex flex-col md:flex-row items-end justify-between gap-12 mb-20">
           <div className="max-w-2xl">
             <p className="text-orange-500 text-xs font-bold uppercase tracking-[0.3em] mb-6">
-              Growth Infrastructure
+              שירותים והתמחויות
             </p>
             <h2
               ref={headlineRef}
               className="text-5xl md:text-8xl font-bold text-white tracking-tighter leading-[0.9]"
             >
-              Precision <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">marketing.</span>
+              מעטפת <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">שיווקית מלאה.</span>
             </h2>
           </div>
           <p className="text-white/30 text-lg md:text-xl font-light max-w-sm italic">
-            Helping ambitious brands move faster and grow smarter.
+            כל מה שצריך כדי לבנות מותג מנצח ולהשיג יותר לקוחות.
           </p>
         </div>
 
-        <div ref={cardsRef} className="grid md:grid-cols-3 gap-6">
+        <div ref={cardsRef} className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {[
-            {
-              title: "Performance Ads",
-              desc: "High-ROAS campaigns across Meta, Google, and TikTok.",
-              icon: Target,
-            },
-            {
-              title: "SEO Dynamics",
-              desc: "Strategic content that captures intent and converts.",
-              icon: Search,
-            },
-            {
-              title: "Brand Impact",
-              desc: "Creative assets designed for the next generation of scroll.",
-              icon: Palette,
-            },
+            { title: "ניהול רשתות חברתיות", desc: "ניהול שוטף ומקצועי של הנכסים הדיגיטליים שלכם.", icon: Users },
+            { title: "קידום ממומן במטא", desc: "קמפיינים מדויקים בפייסבוק ואינסטגרם.", icon: Target },
+            { title: "קידום ממומן בגוגל", desc: "לכידת עניין של גולשים שמחפשים אתכם.", icon: Search },
+            { title: "בינה מלאכותית", desc: "שילוב כלי AI לייעול התהליכים והקריאייטיב.", icon: Zap },
+            { title: "סטודיו לצילום", desc: "צילומי תדמית ומוצר ברמה הגבוהה ביותר.", icon: Camera },
+            { title: "צילומי חוץ", desc: "הפקות צילום מרשימות בלוקיישנים נבחרים.", icon: Image },
+            { title: "עריכת וידאו", desc: "סרטונים שמושכים את העין וממירים גולשים.", icon: Video },
+            { title: "קופירייטינג", desc: "כתיבה שיווקית שמשכנעת לקוחות לפעול.", icon: PenTool },
+            { title: "ייעוץ אסטרטגי", desc: "ליווי צמוד של העסק לפריצה קדימה.", icon: LineChart },
+            { title: "חבילת שיווק מלאה", desc: "פתרון מקיף לכל ערוצי השיווק תחת קורת גג אחת.", icon: Package },
           ].map((item, i) => (
             <div
               key={i}
-              className="feature-card group p-10 rounded-[3rem] bg-white/[0.02] border border-white/5 hover:border-orange-500/20 hover:bg-orange-500/[0.03] transition-all duration-700"
+              className="feature-card group p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-orange-500/20 hover:bg-orange-500/[0.03] transition-all duration-700"
             >
-              <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-10 group-hover:scale-110 group-hover:bg-orange-500/10 transition-all duration-700 border border-white/5">
-                <item.icon className="w-6 h-6 text-white group-hover:text-orange-500 transition-colors" />
+              <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-orange-500/10 transition-all duration-700 border border-white/5">
+                <item.icon className="w-5 h-5 text-white group-hover:text-orange-500 transition-colors" />
               </div>
-              <h4 className="text-2xl font-bold text-white mb-6 tracking-tight">{item.title}</h4>
-              <p className="text-white/30 leading-relaxed font-light">{item.desc}</p>
+              <h4 className="text-xl font-bold text-white mb-3 tracking-tight">{item.title}</h4>
+              <p className="text-white/40 text-sm leading-relaxed font-light">{item.desc}</p>
             </div>
           ))}
         </div>

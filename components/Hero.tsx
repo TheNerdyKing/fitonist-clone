@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import { prefersReducedMotion } from "@/lib/gsap";
 import { Sparkles, TrendingUp, Search, Zap, Palette, ArrowRight, Target } from "lucide-react";
 
@@ -18,95 +19,91 @@ export default function Hero() {
   const deviceRef = useRef<HTMLDivElement>(null);
   const glowRingsRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
     if (prefersReducedMotion()) {
       gsap.set([navRef.current, headlineRef.current, subtextRef.current, deviceRef.current], { opacity: 1, y: 0, scale: 1 });
       return;
     }
 
-    const ctx = gsap.context(() => {
-      let mm = gsap.matchMedia();
+    let mm = gsap.matchMedia();
 
-      mm.add("(min-width: 768px)", () => {
-        const scrollTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top top",
-            end: "+=120%",
-            pin: true,
-            scrub: 1.5, // Smoother scrub
-            pinSpacing: true,
-          },
-        });
-
-        scrollTl.to(navRef.current, { opacity: 0, y: -50, ease: "power2.inOut" }, 0);
-        scrollTl.to(heroPanelRef.current, { scale: 0.95, y: "-10%", borderRadius: "4rem", ease: "power2.inOut" }, 0);
-
-        // Deep 3D tilt as you scroll away
-        scrollTl.to(deviceRef.current, {
-          scale: 1.2,
-          y: "-15%",
-          rotationX: 25,
-          rotationY: -10,
-          transformPerspective: 1000,
-          ease: "power2.inOut",
-          boxShadow: "0 60px 100px -20px rgba(249,115,22,0.4)"
-        }, 0);
-
-        scrollTl.to(glowRingsRef.current, { opacity: 1, scale: 1.5, y: -100 }, 0);
+    mm.add("(min-width: 768px)", () => {
+      const scrollTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "+=120%",
+          pin: true,
+          scrub: 1.5, // Smoother scrub
+          pinSpacing: true,
+        },
       });
 
-      mm.add("(max-width: 767px)", () => {
-        gsap.set([navRef.current, headlineRef.current, subtextRef.current, deviceRef.current], { opacity: 1, y: 0, scale: 1 });
+      scrollTl.to(navRef.current, { opacity: 0, y: -50, ease: "power2.inOut" }, 0);
+      scrollTl.to(heroPanelRef.current, { scale: 0.95, y: "-10%", borderRadius: "4rem", ease: "power2.inOut" }, 0);
+
+      // Deep 3D tilt as you scroll away
+      scrollTl.to(deviceRef.current, {
+        scale: 1.2,
+        y: "-15%",
+        rotationX: 25,
+        rotationY: -10,
+        transformPerspective: 1000,
+        ease: "power2.inOut",
+        boxShadow: "0 60px 100px -20px rgba(249,115,22,0.4)"
+      }, 0);
+
+      scrollTl.to(glowRingsRef.current, { opacity: 1, scale: 1.5, y: -100 }, 0);
+    });
+
+    mm.add("(max-width: 767px)", () => {
+      gsap.set([navRef.current, headlineRef.current, subtextRef.current, deviceRef.current], { opacity: 1, y: 0, scale: 1 });
+    });
+
+    // Entry animations
+    const entryTl = gsap.timeline();
+    entryTl.fromTo(navRef.current, { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" });
+    entryTl.fromTo(headlineRef.current, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "expo.out" }, "-=0.5");
+    entryTl.fromTo(subtextRef.current, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, "-=0.7");
+    entryTl.fromTo(buttonsRef.current?.children || [], { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power3.out" }, "-=0.5");
+    entryTl.fromTo(deviceRef.current, { y: 60, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 1.2, ease: "expo.out" }, "-=0.6");
+
+    // Floating animations for mock UI cards
+    const floatingCards = gsap.utils.toArray(".mock-float-card");
+    floatingCards.forEach((card, i) => {
+      gsap.to(card as Element, {
+        y: i % 2 === 0 ? -12 : 12,
+        rotation: i % 2 === 0 ? 2 : -2,
+        duration: 3 + i,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
       });
+    });
 
-      // Entry animations
-      const entryTl = gsap.timeline();
-      entryTl.fromTo(navRef.current, { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" });
-      entryTl.fromTo(headlineRef.current, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "expo.out" }, "-=0.5");
-      entryTl.fromTo(subtextRef.current, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, "-=0.7");
-      entryTl.fromTo(buttonsRef.current?.children || [], { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power3.out" }, "-=0.5");
-      entryTl.fromTo(deviceRef.current, { y: 60, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 1.2, ease: "expo.out" }, "-=0.6");
+    // Simple parallax on mouse move for desktop
+    const moveDevice = (e: MouseEvent) => {
+      if (window.innerWidth < 768) return;
+      const { clientX, clientY } = e;
+      const xPos = (clientX / window.innerWidth - 0.5) * 20;
+      const yPos = (clientY / window.innerHeight - 0.5) * 20;
 
-      // Floating animations for mock UI cards
-      const floatingCards = gsap.utils.toArray(".mock-float-card");
-      floatingCards.forEach((card, i) => {
-        gsap.to(card as Element, {
-          y: i % 2 === 0 ? -12 : 12,
-          rotation: i % 2 === 0 ? 2 : -2,
-          duration: 3 + i,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut"
-        });
+      gsap.to(deviceRef.current, {
+        x: xPos,
+        y: yPos,
+        rotationY: xPos / 2,
+        rotationX: -yPos / 2,
+        duration: 1.5,
+        ease: "power2.out"
       });
+    };
 
-      // Simple parallax on mouse move for desktop
-      const moveDevice = (e: MouseEvent) => {
-        if (window.innerWidth < 768) return;
-        const { clientX, clientY } = e;
-        const xPos = (clientX / window.innerWidth - 0.5) * 20;
-        const yPos = (clientY / window.innerHeight - 0.5) * 20;
-
-        gsap.to(deviceRef.current, {
-          x: xPos,
-          y: yPos,
-          rotationY: xPos / 2,
-          rotationX: -yPos / 2,
-          duration: 1.5,
-          ease: "power2.out"
-        });
-      };
-
-      window.addEventListener("mousemove", moveDevice);
-      return () => {
-        window.removeEventListener("mousemove", moveDevice);
-        mm.revert();
-      };
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+    window.addEventListener("mousemove", moveDevice);
+    return () => {
+      window.removeEventListener("mousemove", moveDevice);
+      mm.revert();
+    };
+  }, { scope: sectionRef });
 
   return (
     <section
@@ -117,14 +114,14 @@ export default function Hero() {
         <nav className="flex items-center justify-between px-6 py-4 bg-black/60 backdrop-blur-2xl rounded-full border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.8)]">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20 border border-white/20 hover:scale-105 transition-transform cursor-pointer">
-              <span className="text-black text-sm font-black tracking-tighter">LG</span>
+              <span className="text-black text-sm font-black tracking-tighter">SX</span>
             </div>
-            <span className="text-white font-bold tracking-tight hidden sm:block">LumaGrowth</span>
+            <span className="text-white font-bold tracking-tight hidden sm:block">STONIX</span>
           </div>
           <div className="hidden md:flex items-center gap-8 px-4">
-            <a href="#services" className="text-white/60 hover:text-white text-xs uppercase tracking-[0.2em] font-medium transition-colors cursor-pointer">Services</a>
-            <a href="#work" className="text-white/60 hover:text-white text-xs uppercase tracking-[0.2em] font-medium transition-colors cursor-pointer">Work</a>
-            <a href="#contact" className="text-white/60 hover:text-white text-xs uppercase tracking-[0.2em] font-medium transition-colors cursor-pointer">Contact</a>
+            <a href="#services" className="text-white/60 hover:text-white text-xs uppercase tracking-[0.2em] font-medium transition-colors cursor-pointer">שירותים</a>
+            <a href="#work" className="text-white/60 hover:text-white text-xs uppercase tracking-[0.2em] font-medium transition-colors cursor-pointer">תוצאות</a>
+            <a href="#contact" className="text-white/60 hover:text-white text-xs uppercase tracking-[0.2em] font-medium transition-colors cursor-pointer">דברו איתנו</a>
           </div>
           <button className="w-10 h-10 rounded-full bg-orange-500/10 hover:bg-orange-500/20 flex items-center justify-center border border-orange-500/30 transition-colors shadow-[0_0_15px_rgba(249,115,22,0.15)] cursor-pointer">
             <Sparkles className="w-4 h-4 text-orange-500" />
@@ -149,16 +146,16 @@ export default function Hero() {
 
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-white/60 text-xs font-bold tracking-widest uppercase mb-8 backdrop-blur-md">
             <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-            Next-Gen Performance
+            הדור הבא של הביצועים
           </div>
 
           <h1
             ref={headlineRef}
             className="text-6xl md:text-8xl lg:text-9xl font-black text-white text-center max-w-6xl leading-[0.9] tracking-tighter mb-8"
           >
-            Scale at the speed <br className="hidden md:block" />
-            <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-br from-orange-400 via-orange-500 to-orange-700 pb-2">
-              of creativity.
+            תוצאות. <br className="hidden md:block" />
+            <span className="relative inline-block mt-4 text-transparent bg-clip-text bg-gradient-to-br from-orange-400 via-orange-500 to-orange-700 pb-2">
+              לא שיווק.
               {/* Underline swoosh */}
               <svg className="absolute w-full h-8 -bottom-4 left-0 text-orange-500/50 pointer-events-none hidden md:block" viewBox="0 0 300 24" preserveAspectRatio="none">
                 <path d="M2,20 Q150,0 298,20" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
@@ -170,18 +167,18 @@ export default function Hero() {
             ref={subtextRef}
             className="mt-2 text-xl md:text-2xl text-white/50 text-center max-w-2xl font-light tracking-wide leading-relaxed"
           >
-            Stop guessing. Start scaling. Dominate your market with campaigns that actually convert.
+            אנחנו מטפלים בכל מה שקשור לפרסום - כדי שיהיה לך שקט נפשי. עם מטרה אחת ברורה: להביא לך יותר לקוחות.
           </p>
 
           <div ref={buttonsRef} className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12 w-full sm:w-auto relative z-20">
-            <button className="group relative flex items-center justify-center gap-3 px-10 py-5 bg-orange-500 text-black rounded-full font-bold text-lg w-full sm:w-auto overflow-hidden transition-transform hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(249,115,22,0.4)]">
-              <span className="relative z-10">Start Scaling</span>
-              <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
+            <button onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })} className="group relative flex items-center justify-center gap-3 px-10 py-5 bg-orange-500 text-black rounded-full font-bold text-lg w-full sm:w-auto overflow-hidden transition-transform hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(249,115,22,0.4)]">
+              <span className="relative z-10">דברו איתנו</span>
+              <ArrowRight className="w-5 h-5 relative z-10 group-hover:-translate-x-1 transition-transform rotate-180" />
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
             </button>
 
-            <button className="flex items-center justify-center gap-3 px-10 py-5 bg-white/[0.03] backdrop-blur-md text-white border border-white/10 rounded-full font-bold text-lg w-full sm:w-auto transition-colors hover:bg-white/[0.08] hover:border-white/20">
-              View Results
+            <button onClick={() => document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' })} className="flex items-center justify-center gap-3 px-10 py-5 bg-white/[0.03] backdrop-blur-md text-white border border-white/10 rounded-full font-bold text-lg w-full sm:w-auto transition-colors hover:bg-white/[0.08] hover:border-white/20">
+              תנו לתוצאות לדבר
             </button>
           </div>
 
@@ -208,7 +205,7 @@ export default function Hero() {
 
                 <div className="px-5 py-2 bg-orange-500/10 rounded-full border border-orange-500/20 text-[10px] md:text-xs text-orange-500 font-bold tracking-widest uppercase flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-                  Live Sync
+                  סנכרון חי
                 </div>
               </div>
 

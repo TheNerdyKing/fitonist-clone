@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "LumaGrowth - Performance Marketing That Converts",
-  description:
-    "Launch campaigns that actually convert. Performance marketing + creative + CRO. We help brands scale profitably.",
+  title: "STONIX - תוצאות. לא שיווק.",
+  description: "אנחנו מטפלים בכל מה שקשור לפרסום - כדי שיהיה לך שקט נפשי. עם מטרה אחת ברורה: להביא לך יותר לקוחות.",
 };
 
 export default function RootLayout({
@@ -13,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="he" dir="rtl">
       <body className="antialiased bg-dark-bg text-white">
         {children}
       </body>

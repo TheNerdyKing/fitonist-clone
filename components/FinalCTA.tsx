@@ -3,15 +3,16 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import { prefersReducedMotion } from "@/lib/gsap";
 import { Flame, TrendingUp, Zap, Calendar, Clock, User, ArrowRight } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const benefits = [
-  { text: "Unlimited campaign experiments", icon: Flame },
-  { text: "Real-time performance tracking", icon: TrendingUp },
-  { text: "Weekly strategy calls", icon: Zap },
+  { text: "קמפיינים מדויקים וחכמים", icon: Flame },
+  { text: "מעקב ביצועים בזמן אמת", icon: TrendingUp },
+  { text: "ליווי אישי ושקוף לאורך הדרך", icon: Zap },
 ];
 
 export default function FinalCTA() {
@@ -20,79 +21,76 @@ export default function FinalCTA() {
   const contentRef = useRef<HTMLDivElement>(null);
   const deviceRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
     if (prefersReducedMotion()) {
       gsap.set([containerRef.current, contentRef.current?.children || [], deviceRef.current], { opacity: 1, y: 0, scale: 1 });
       return;
     }
 
-    const ctx = gsap.context(() => {
-      let mm = gsap.matchMedia();
+    let mm = gsap.matchMedia();
 
-      mm.add("(min-width: 768px)", () => {
-        gsap.fromTo(
-          containerRef.current,
-          { scale: 0.95, opacity: 0 },
-          {
-            scale: 1,
-            opacity: 1,
-            duration: 0.8,
-            ease: "expo.out",
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top 80%",
-            },
-          }
-        );
-
-        const elements = contentRef.current?.querySelectorAll(".cta-element");
-        if (elements) {
-          gsap.fromTo(
-            elements,
-            { y: 30, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.6,
-              stagger: 0.1,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: sectionRef.current,
-                start: "top 70%",
-              },
-            }
-          );
+    mm.add("(min-width: 768px)", () => {
+      gsap.fromTo(
+        containerRef.current,
+        { scale: 0.95, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.8,
+          ease: "expo.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
         }
+      );
 
+      const elements = contentRef.current?.querySelectorAll(".cta-element");
+      if (elements) {
         gsap.fromTo(
-          deviceRef.current,
-          { x: 50, opacity: 0, rotateY: -15, transformOrigin: "left center" },
+          elements,
+          { y: 30, opacity: 0 },
           {
-            x: 0,
+            y: 0,
             opacity: 1,
-            rotateY: 0,
-            duration: 0.8,
+            duration: 0.6,
+            stagger: 0.1,
             ease: "power3.out",
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: "top 60%",
+              start: "top 70%",
             },
           }
         );
-      });
+      }
 
-      mm.add("(max-width: 767px)", () => {
-        gsap.set([containerRef.current], { opacity: 1, y: 0, scale: 1 });
-      });
+      gsap.fromTo(
+        deviceRef.current,
+        { x: 50, opacity: 0, rotateY: -15, transformOrigin: "left center" },
+        {
+          x: 0,
+          opacity: 1,
+          rotateY: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 60%",
+          },
+        }
+      );
+    });
 
-    }, sectionRef);
+    mm.add("(max-width: 767px)", () => {
+      gsap.set([containerRef.current], { opacity: 1, y: 0, scale: 1 });
+    });
 
-    return () => ctx.revert();
-  }, []);
+  }, { scope: sectionRef });
 
   return (
     <section
       ref={sectionRef}
+      id="contact"
       className="relative min-h-screen bg-[#050505] py-24 px-4 md:px-8 overflow-hidden flex items-center"
     >
       {/* Deep Background Glow */}
@@ -111,13 +109,13 @@ export default function FinalCTA() {
           {/* LEFT SIDE TEXT */}
           <div ref={contentRef} className="flex flex-col">
             <div className="cta-element inline-flex items-center gap-2 px-3 py-1 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-500 text-xs font-bold tracking-widest uppercase mb-8 w-fit">
-              <Zap className="w-3 h-3" /> Start Scaling
+              <Zap className="w-3 h-3" /> דברו איתנו
             </div>
 
             <h2 className="cta-element text-5xl md:text-7xl font-black text-white mb-8 leading-[1] tracking-tighter">
-              Ready to <br />
+              מוכנים <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">
-                dominate?
+                לשבור שיאים?
               </span>
             </h2>
 
@@ -136,9 +134,9 @@ export default function FinalCTA() {
             </ul>
 
             <div className="cta-element">
-              <button className="flex items-center gap-3 px-8 py-5 bg-orange-500 hover:bg-orange-400 text-black rounded-full text-lg font-bold transition-all shadow-[0_0_30px_rgba(249,115,22,0.3)] hover:shadow-[0_0_40px_rgba(249,115,22,0.5)] hover:-translate-y-1">
-                Book Your Strategy Call
-                <ArrowRight className="w-5 h-5" />
+              <button onClick={() => window.open('https://wa.me/972552664456', '_blank')} className="flex items-center gap-3 px-8 py-5 bg-orange-500 hover:bg-orange-400 text-black rounded-full text-lg font-bold transition-all shadow-[0_0_30px_rgba(249,115,22,0.3)] hover:shadow-[0_0_40px_rgba(249,115,22,0.5)] hover:scale-105 active:scale-95">
+                <span>שלחו הודעה בוואטסאפ</span>
+                <ArrowRight className="w-5 h-5 rotate-180" />
               </button>
             </div>
           </div>
@@ -171,18 +169,18 @@ export default function FinalCTA() {
                     <User className="w-8 h-8 text-black" />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-lg">Strategy Call</h4>
-                    <p className="text-white/40 text-sm">45 Min • Zoom Video</p>
+                    <h4 className="text-white font-bold text-lg">ייעוץ אישי</h4>
+                    <p className="text-white/40 text-sm">שיחת אפיון ללא עלות</p>
                   </div>
                 </div>
 
                 {/* Inputs Mock */}
                 <div className="space-y-4">
                   <div className="h-14 w-full bg-[#1A1A1A] rounded-2xl border border-white/5 px-5 flex items-center group-hover:border-orange-500/30 transition-colors">
-                    <span className="text-white/20 text-sm">Corporate Email...</span>
+                    <span className="text-white/20 text-sm">כתובת אימייל...</span>
                   </div>
                   <div className="h-14 w-full bg-[#1A1A1A] rounded-2xl border border-white/5 px-5 flex items-center group-hover:border-orange-500/30 transition-colors">
-                    <span className="text-white/20 text-sm">Website URL...</span>
+                    <span className="text-white/20 text-sm">כתובת אתר...</span>
                   </div>
                 </div>
 
@@ -190,7 +188,7 @@ export default function FinalCTA() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="h-24 bg-orange-500/5 rounded-2xl border border-orange-500/20 p-4 flex flex-col justify-center items-center gap-2">
                     <Calendar className="w-5 h-5 text-orange-500" />
-                    <span className="text-white font-bold text-sm">Tomorrow</span>
+                    <span className="text-white font-bold text-sm">מחר</span>
                   </div>
                   <div className="h-24 bg-white/[0.02] rounded-2xl border border-white/5 p-4 flex flex-col justify-center items-center gap-2">
                     <Clock className="w-5 h-5 text-white/40" />
@@ -198,8 +196,8 @@ export default function FinalCTA() {
                   </div>
                 </div>
 
-                <div className="mt-4 h-14 w-full bg-orange-500 hover:bg-orange-400 rounded-xl shadow-[0_0_20px_rgba(249,115,22,0.2)] flex items-center justify-center cursor-pointer transition-colors">
-                  <span className="text-black font-bold">Confirm Booking</span>
+                <div onClick={() => window.open('https://wa.me/972552664456', '_blank')} className="mt-4 h-14 w-full bg-orange-500 hover:bg-orange-400 rounded-xl shadow-[0_0_20px_rgba(249,115,22,0.2)] flex items-center justify-center cursor-pointer transition-colors">
+                  <span className="text-black font-bold">לתיאום שיחה</span>
                 </div>
               </div>
 

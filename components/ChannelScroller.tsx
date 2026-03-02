@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Search, Target, Palette, Settings, TrendingUp, Zap, MousePointerClick } from "lucide-react";
+import { useGSAP } from "@gsap/react";
 import { prefersReducedMotion } from "@/lib/gsap";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -11,18 +12,18 @@ gsap.registerPlugin(ScrollTrigger);
 const PANELS = [
   {
     key: "seo",
-    title: "SEO & Content",
-    desc: "Dominate search results with data-driven SEO strategies and content that ranks and converts.",
+    title: "תוכן וקידום אורגני",
+    desc: "אנחנו דואגים שתקבלו נוכחות דיגיטלית חזקה לאורך זמן, במיקומים הגבוהים ביותר.",
     color: "bg-orange-500/10",
     icon: <Search className="w-6 h-6 text-orange-500" />,
-    url: "LUMAGROWTH.AI/SEO",
+    url: "STONIX.CO.IL/SEO",
     MockUI: () => (
       <div className="flex-1 flex flex-col gap-4 md:gap-6 p-6 md:p-10 h-full">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { label: "Organic Traffic", val: "+148%", icon: TrendingUp },
-            { label: "Keywords Ranked", val: "1,204", icon: Search },
-            { label: "Domain Rating", val: "78", icon: Target }
+            { label: "טראפיק אורגני", val: "+148%", icon: TrendingUp },
+            { label: "ביטויים מקודמים", val: "1,204", icon: Search },
+            { label: "דירוג דומיין", val: "78", icon: Target }
           ].map((stat, i) => (
             <div key={i} className="bg-white/[0.03] rounded-2xl p-4 border border-white/5 flex flex-col justify-between">
               <stat.icon className="w-4 h-4 text-orange-500 mb-2 md:mb-4" />
@@ -34,7 +35,7 @@ const PANELS = [
           ))}
         </div>
         <div className="flex-1 bg-white/[0.03] rounded-3xl border border-white/5 p-6 flex flex-col items-end justify-end gap-2 relative overflow-hidden min-h-[150px]">
-          <div className="text-[10px] text-white/40 uppercase tracking-widest absolute top-6 left-6">Traffic Growth</div>
+          <div className="text-[10px] text-white/40 uppercase tracking-widest absolute top-6 left-6">גידול בטראפיק</div>
           <svg className="absolute inset-0 w-full h-[80%] bottom-0 mt-auto" preserveAspectRatio="none" viewBox="0 0 100 100">
             <path d="M0,100 L0,80 Q20,90 40,60 T80,30 L100,10 L100,100 Z" fill="rgba(249,115,22,0.1)" />
             <path d="M0,80 Q20,90 40,60 T80,30 L100,10" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" />
@@ -45,17 +46,17 @@ const PANELS = [
   },
   {
     key: "ads",
-    title: "Paid Ads",
-    desc: "Launch campaigns that stay profitable with tight tracking, testing, and creative iteration.",
+    title: "קידום ממומן",
+    desc: "ניהול קמפיינים מדויקים בפלטפורמות המובילות שמייצרים לידים איכותיים ורלוונטיים.",
     color: "bg-orange-600/10",
     icon: <Target className="w-6 h-6 text-orange-600" />,
-    url: "LUMAGROWTH.AI/ADS",
+    url: "STONIX.CO.IL/ADS",
     MockUI: () => (
       <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 p-6 md:p-10 h-full">
         <div className="flex flex-col gap-4">
           <div className="bg-white/[0.03] rounded-3xl p-6 flex-1 border border-white/5 flex flex-col justify-between relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-[40px] -mr-10 -mt-10" />
-            <div className="text-[10px] text-white/40 uppercase tracking-widest">Active ROAS</div>
+            <div className="text-[10px] text-white/40 uppercase tracking-widest">החזר השקעה פעיל</div>
             <div>
               <div className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-2">4.8x</div>
               <div className="inline-flex items-center gap-1 px-2 py-1 bg-green-500/10 rounded-md text-green-500 text-xs font-bold">
@@ -64,12 +65,12 @@ const PANELS = [
             </div>
           </div>
           <div className="bg-orange-500/10 rounded-2xl h-14 md:h-16 border border-orange-500/20 flex items-center justify-between px-6">
-            <span className="text-orange-500 font-bold text-sm">Target CPA</span>
+            <span className="text-orange-500 font-bold text-sm">יעד עלות לליד</span>
             <span className="text-white font-mono text-lg">$42.50</span>
           </div>
         </div>
         <div className="bg-[#141414] rounded-3xl border border-white/5 p-6 flex flex-col align-bottom justify-end relative overflow-hidden h-40 md:h-auto">
-          <div className="absolute top-6 left-6 text-[10px] text-white/40 uppercase tracking-widest">Campaign Mix</div>
+          <div className="absolute top-6 left-6 text-[10px] text-white/40 uppercase tracking-widest">תמהיל קמפיינים</div>
           <div className="flex items-end gap-2 w-full h-[60%] opacity-80 mt-auto">
             <div className="flex-1 bg-white/10 rounded-t-sm h-[30%]" />
             <div className="flex-1 bg-orange-500/40 rounded-t-sm h-[60%]" />
@@ -82,11 +83,11 @@ const PANELS = [
   },
   {
     key: "brand",
-    title: "Creative & Branding",
-    desc: "Make the offer look irresistible with creative that earns attention and improves conversion.",
+    title: "קריאייטיב ומיתוג",
+    desc: "בניית מותג בולט וייחודי עם מסרים שגורמים ללקוחות לבחור בכם על פני כל השאר.",
     color: "bg-orange-400/10",
     icon: <Palette className="w-6 h-6 text-orange-400" />,
-    url: "LUMAGROWTH.AI/BRAND",
+    url: "STONIX.CO.IL/BRAND",
     MockUI: () => (
       <div className="flex-1 flex flex-col p-6 md:p-10 gap-6 h-full">
         <div className="flex gap-4">
@@ -122,17 +123,17 @@ const PANELS = [
   },
   {
     key: "crm",
-    title: "Automation & CRM",
-    desc: "Capture, score, and follow up automatically so leads don’t leak while you sleep.",
+    title: "ניהול רשתות ואוטומציה",
+    desc: "כלים מתקדמים לניהול הלקוחות שלכם וחשיפה מקסימלית ברשתות החברתיות.",
     color: "bg-orange-700/10",
     icon: <Settings className="w-6 h-6 text-orange-700" />,
-    url: "LUMAGROWTH.AI/CRM",
+    url: "STONIX.CO.IL/CRM",
     MockUI: () => (
       <div className="flex-1 flex flex-col p-6 md:p-10 h-full relative overflow-hidden">
         <div className="absolute right-0 top-1/4 w-px h-1/2 bg-orange-500/20" />
         <div className="absolute left-6 md:left-10 top-1/4 w-px h-1/2 bg-white/10" />
 
-        <div className="text-[10px] text-white/40 uppercase tracking-widest mb-6 px-2">Workflow Builder</div>
+        <div className="text-[10px] text-white/40 uppercase tracking-widest mb-6 px-2">בניית תהליכים</div>
         <div className="flex-1 flex flex-col justify-between relative pl-8 min-h-[200px]">
           <div className="relative">
             <div className="absolute -left-[38px] md:-left-10 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white/10 border-2 border-[#0F0F0F]" />
@@ -180,66 +181,62 @@ export default function ChannelScroller() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  useLayoutEffect(() => {
+  useGSAP(() => {
     if (prefersReducedMotion()) return;
 
-    const ctx = gsap.context(() => {
-      let mm = gsap.matchMedia();
+    let mm = gsap.matchMedia();
 
-      // DESKTOP: Native overlapping sticky cards, NO pinning traps
-      mm.add("(min-width: 768px)", () => {
-        const cards = gsap.utils.toArray<HTMLElement>("[data-card]");
+    // DESKTOP: Native overlapping sticky cards, NO pinning traps
+    mm.add("(min-width: 768px)", () => {
+      const cards = gsap.utils.toArray<HTMLElement>("[data-card]");
 
-        cards.forEach((card, index) => {
-          // Detect when the card is near the center to change the active left-side text
-          ScrollTrigger.create({
-            trigger: card,
-            start: "top 60%",
-            end: "bottom 60%",
-            onToggle: (self) => {
-              if (self.isActive) setActiveIndex(index);
-            }
-          });
+      cards.forEach((card, index) => {
+        // Detect when the card is near the center to change the active left-side text
+        ScrollTrigger.create({
+          trigger: card,
+          start: "top 60%",
+          end: "bottom 60%",
+          onToggle: (self) => {
+            if (self.isActive) setActiveIndex(index);
+          }
         });
       });
+    });
 
-      // MOBILE: Simple sequential fade up scrolling
-      mm.add("(max-width: 767px)", () => {
-        const mobileCards = gsap.utils.toArray<HTMLElement>(".mobile-channel-card");
-        mobileCards.forEach((card) => {
-          gsap.fromTo(card,
-            { opacity: 0, y: 50 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.6,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: card,
-                start: "top 85%",
-                toggleActions: "play none none reverse"
-              }
+    // MOBILE: Simple sequential fade up scrolling
+    mm.add("(max-width: 767px)", () => {
+      const mobileCards = gsap.utils.toArray<HTMLElement>(".mobile-channel-card");
+      mobileCards.forEach((card) => {
+        gsap.fromTo(card,
+          { opacity: 0, y: 50 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 85%",
+              toggleActions: "play none none reverse"
             }
-          );
-        });
+          }
+        );
       });
+    });
 
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+  }, { scope: sectionRef });
 
   return (
-    <section ref={sectionRef} className="relative bg-[#050505] pt-24 pb-32 min-h-screen">
+    <section ref={sectionRef} id="services" className="relative bg-[#050505] pt-24 pb-32 min-h-screen">
       <div className="mx-auto max-w-7xl px-6 md:px-12 w-full relative">
         <div className="mb-12">
           <p className="text-orange-500 font-bold uppercase tracking-[0.25em] text-xs mb-4">
-            Strategy First
+            אסטרטגיה מנצחת
           </p>
           <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white leading-[0.9]">
-            Choose your <br />
+            המסע <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">
-              channel.
+              שלכם.
             </span>
           </h2>
         </div>

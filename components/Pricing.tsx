@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import { prefersReducedMotion } from "@/lib/gsap";
 import { Check, Sparkles } from "lucide-react";
 
@@ -59,34 +60,30 @@ export default function Pricing() {
   const cardsRef = useRef<HTMLDivElement>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
     if (prefersReducedMotion()) return;
 
-    const ctx = gsap.context(() => {
-      const cards = cardsRef.current?.querySelectorAll(".pricing-card");
-      if (!cards) return;
+    const cards = cardsRef.current?.querySelectorAll(".pricing-card");
+    if (!cards) return;
 
-      gsap.fromTo(
-        cards,
-        { y: 60, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 70%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
+    gsap.fromTo(
+      cards,
+      { y: 60, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 70%",
+          toggleActions: "play none none reverse",
+        },
+      }
+    );
 
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+  }, { scope: sectionRef });
 
   return (
     <section
@@ -113,8 +110,8 @@ export default function Pricing() {
           <div
             key={plan.name}
             className={`pricing-card relative rounded-[3rem] p-10 border transition-all duration-500 ${plan.highlighted
-                ? "bg-[#0A0A0A] border-orange-500/30 shadow-[0_30px_60px_rgba(249,115,22,0.1)] scale-105 z-20"
-                : "bg-white/[0.02] border-white/5 hover:border-white/10"
+              ? "bg-[#0A0A0A] border-orange-500/30 shadow-[0_30px_60px_rgba(249,115,22,0.1)] scale-105 z-20"
+              : "bg-white/[0.02] border-white/5 hover:border-white/10"
               } ${hoveredIndex === index ? "-translate-y-3" : ""}`}
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
@@ -148,8 +145,8 @@ export default function Pricing() {
 
             <button
               className={`w-full py-5 rounded-full font-bold transition-all duration-300 relative overflow-hidden group ${plan.highlighted
-                  ? "bg-orange-500 text-black hover:bg-orange-400 shadow-xl"
-                  : "bg-white/5 text-white hover:bg-white/10 border border-white/10"
+                ? "bg-orange-500 text-black hover:bg-orange-400 shadow-xl"
+                : "bg-white/5 text-white hover:bg-white/10 border border-white/10"
                 }`}
             >
               <span className="relative z-10">Get Started</span>

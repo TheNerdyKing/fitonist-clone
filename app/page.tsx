@@ -10,7 +10,7 @@ import ChooseChannel from "@/components/ChooseChannel";
 import ChannelScroller from "@/components/ChannelScroller";
 import ProgressRing from "@/components/ProgressRing";
 import BentoCards from "@/components/BentoCards";
-import Pricing from "@/components/Pricing";
+import Testimonials from "@/components/Testimonials";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 
@@ -52,7 +52,7 @@ export default function Home() {
         <ChannelScroller />
         <ProgressRing />
         <BentoCards />
-        <Pricing />
+        <Testimonials />
         <FinalCTA />
         <Footer />
       </div>

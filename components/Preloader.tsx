@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
 import { prefersReducedMotion } from "@/lib/gsap";
 
 interface PreloaderProps {
@@ -13,7 +14,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
   const iconRef = useRef<HTMLDivElement>(null);
   const [hasChecked, setHasChecked] = useState(false);
 
-  useEffect(() => {
+  useGSAP(() => {
     // Show only once per user session or until localStorage cleared
     const seenIntro = localStorage.getItem("seenIntro");
     if (seenIntro || prefersReducedMotion()) {
@@ -22,29 +23,26 @@ export default function Preloader({ onComplete }: PreloaderProps) {
     }
     setHasChecked(true);
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        onComplete: () => {
-          localStorage.setItem("seenIntro", "true");
-          gsap.to(containerRef.current, {
-            opacity: 0,
-            duration: 0.3,
-            onComplete,
-          });
-        },
-      });
+    const tl = gsap.timeline({
+      onComplete: () => {
+        localStorage.setItem("seenIntro", "true");
+        gsap.to(containerRef.current, {
+          opacity: 0,
+          duration: 0.3,
+          onComplete,
+        });
+      },
+    });
 
-      // Quick 0.7s max duration as requested
-      tl.fromTo(
-        iconRef.current,
-        { scale: 0.8, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" }
-      );
-      tl.to(iconRef.current, { scale: 1.1, opacity: 0, duration: 0.3, delay: 0.1 });
-    }, containerRef);
+    // Quick 0.7s max duration as requested
+    tl.fromTo(
+      iconRef.current,
+      { scale: 0.8, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" }
+    );
+    tl.to(iconRef.current, { scale: 1.1, opacity: 0, duration: 0.3, delay: 0.1 });
 
-    return () => ctx.revert();
-  }, [onComplete]);
+  }, { scope: containerRef, dependencies: [onComplete] });
 
   const handleSkip = () => {
     localStorage.setItem("seenIntro", "true");
